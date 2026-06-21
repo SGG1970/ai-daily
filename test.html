@@ -1,0 +1,27 @@
+﻿<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><title>API测试</title></head>
+<body>
+<h2>🔍 API连通性测试</h2>
+<div id="result">测试中...</div>
+<script>
+async function test(){
+  var html = "";
+  var apis = [
+    ["HackerNews", "https://hn.algolia.com/api/v1/search?query=AI&tags=story&hitsPerPage=3"],
+    ["DEV.to", "https://dev.to/api/articles?tag=ai&per_page=3"],
+    ["HN Top", "https://hacker-news.firebaseio.com/v0/topstories.json"]
+  ];
+  for(var i=0;i<apis.length;i++){
+    try{
+      var r = await fetch(apis[i][1]);
+      var d = await r.text();
+      html += "<p>✅ " + apis[i][0] + ": " + r.status + " (" + d.length + " bytes)</p>";
+    }catch(e){
+      html += "<p>❌ " + apis[i][0] + ": " + e.message + "</p>";
+    }
+  }
+  document.getElementById("result").innerHTML = html;
+}
+test();
+</script>
+</body></html>
