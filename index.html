@@ -115,13 +115,20 @@ async function rf(){
   if(loading)return;loading=true;
   var btn=document.getElementById("btnRefresh");btn.disabled=true;btn.textContent="⏳...";
   for(var i=0;i<4;i++)document.getElementById("f"+i).innerHTML='<div class="ld"><div class="sp"></div><p>'+cats[i]+'...</p></div>';
+  // 全局超时保护：20秒后强制结束
+  var globalTimer = setTimeout(function(){
+    tt("⏰ 请求超时，请检查网络或按F12看控制台错误","e");
+    if(btn){btn.disabled=false;btn.textContent="🔄 刷新";}
+    loading=false;
+  }, 20000);
   try{
     var t=Date.now();
     var rs=await Promise.all([tr(),fk(["AI agent","autonomous agent","MCP","function calling","multi-agent"]),fk(["AI workflow","LangChain","RAG","prompt engineering","AI automation"]),fk(["large language model","GPT","multimodal","AGI","AI research"])]);
+    clearTimeout(globalTimer);
     data=rs;for(var i=0;i<4;i++)rd(i);us();ut();
     var total=rs.reduce(function(a,b){return a+b.length;},0);
     tt("✅ "+total+" 条 ("+((Date.now()-t)/1000).toFixed(1)+"s)");try{localStorage.setItem("ai6",JSON.stringify({d:rs,t:Date.now()}));}catch(e){}
-  }catch(e){console.error(e);tt("❌ "+e.message,"e");}
+  }catch(e){clearTimeout(globalTimer);console.error(e);tt("❌ "+e.message,"e");}
   btn.disabled=false;btn.textContent="🔄 刷新";loading=false;
 }
 
